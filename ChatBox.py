@@ -14,12 +14,13 @@ openai.api_version = "2023-07-01-preview"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+
 st.title("ChatGPT")
 
 #client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+#if "openai_model" not in st.session_state:
+#    st.session_state["openai_model"] = "gpt-3.5-turbo"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -46,12 +47,12 @@ if prompt := st.chat_input("What is up?"):
             stream=True,
         ):
             ##print(response)
-            if(hasattr(response['choices'][0]['delta'] , 'content')):
-                full_response += str(response['choices'][0]['delta']['content'] or "")
+            if len(response['choices'])>0 and  hasattr(response['choices'][0]['delta'] , 'content'):
+                if(hasattr(response['choices'][0]['delta'] , 'content')):
+                    full_response += str(response['choices'][0]['delta']['content'] or "")
             
             message_placeholder.markdown(full_response + "▌")
-        
-        end_time = time.time()
+            end_time = time.time()
 
        
         #message_placeholder.markdown(full_response)
