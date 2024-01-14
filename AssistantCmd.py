@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 # 设置 OpenAI API 密钥
 load_dotenv('.env')
 openai.api_type = "azure"
-openai.api_base = "https://<YOUR_RESROUCE>.openai.azure.com/"
+openai.api_base = "https://smartopaifranc.openai.azure.com/"
 openai.api_version = "2023-07-01-preview"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -29,25 +29,39 @@ for example:
     修改后的代码：xxxx"
 
 """
+
+conversation  = [{"role":"system","content":f"{review_prompt}"}]
+
+
+
 # 定义 OpenAI API 请求
 def check_code(code):
-    model_engine = "<YOUR_RESROUCE>"
-    prompt = f"{review_prompt}:\n{code}\n\n"
-    response = openai.Completion.create(
-        engine=model_engine,
-        prompt=prompt,
-        max_tokens=1024,
-        n=1,
-        stop=None,
+    print("Checking code...")
+    model_engine = "gpt4turbo"
+    #prompt = f"{review_prompt}:\n{code}\n\n"
+    conversation.append({"role":"user","content":code})
+    #print(f"Conversation is:{conversation}")
+
+    response = openai.ChatCompletion.create(
+        engine="gpt4turbo",
+        messages = conversation,
         temperature=0,
-    )
-    return response.choices[0].text.strip()
+        max_tokens=4092,
+        top_p=0.95,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop=None
+        )
+    
+    
+    content = response['choices'][0]['message']['content']
+    return content
 
 # 遍历指定文件夹中的所有 Java 文件
 def check_folder(folder_path):
     # 设置输出文件路径
     output_file = os.path.join(folder_path, "scan_result.txt")
-
+    result = ""
     with open(output_file, "w",encoding='utf-8',errors='replace') as output:
         for root, dirs, files in os.walk(folder_path):
             for file in files:
