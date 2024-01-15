@@ -10,7 +10,7 @@ import time
 # 设置 OpenAI API 密钥
 load_dotenv('.env')
 openai.api_type = "azure"
-openai.api_base = "https://xxxx.openai.azure.com/"
+openai.api_base = "https://xxx.openai.azure.com/"
 openai.api_version = "2023-07-01-preview"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -46,14 +46,15 @@ if prompt := st.chat_input("What is up?"):
         full_response = ""
         start_time = time.time()
         for response in client.chat.completions.create(
-            model="gpt4turbo",
+            model="xxx",
             messages=[
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
             ],
             stream=True,
         ):
-            if response.choices[0].delta.content is not None:
+            print(response)
+            if len(response.choices)>0 and response.choices[0].delta.content is not None:
                 full_response += str(response.choices[0].delta.content)
             
             message_placeholder.markdown(full_response + "▌")
